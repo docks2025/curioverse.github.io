@@ -8,7 +8,407 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
     <style>
         body {
-…            updatePointsDisplay();
+            font-family: 'Nunito', sans-serif;
+            background-color: #f0f4f8; /* Light, playful background */
+        }
+        .header-title {
+            font-family: 'Fredoka One', cursive;
+            color: #3b82f6; /* Blue-500 */
+        }
+        .category-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left-width: 6px;
+        }
+        .category-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .question-card {
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+        .question-card:hover {
+            border-color: #3b82f6; /* Blue-500 */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .question-card.listened {
+            background-color: #e0f2fe; /* Light blue for listened questions */
+            border-left-width: 4px;
+            border-left-color: #22c55e; /* Green-500 */
+        }
+        .modal {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            transform: translateY(20px) scale(0.98);
+            opacity: 0;
+        }
+        .modal.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal.open .modal-content {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+        .progress-bar-bg {
+            background-color: #e5e7eb; /* Gray-200 */
+        }
+        .progress-bar-fill {
+            background-color: #3b82f6; /* Blue-500 */
+            transition: width 0.5s ease-in-out;
+        }
+        .badge {
+            font-family: 'Fredoka One', cursive;
+            animation: badge-appear 0.5s ease-out;
+        }
+        @keyframes badge-appear {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .points-display {
+            animation: points-update 0.3s ease-in-out;
+        }
+        @keyframes points-update {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); color: #22c55e; } /* Green-500 */
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="antialiased text-slate-700">
+
+    <header class="bg-white shadow-md sticky top-0 z-40 py-4">
+        <div class="container mx-auto px-4 sm:px-6 flex justify-between items-center">
+            <h1 class="header-title text-3xl md:text-4xl">CurioVerse</h1>
+            <div class="text-right">
+                <p class="text-sm text-slate-500">Your Score:</p>
+                <p id="user-points" class="text-2xl font-bold text-amber-500 points-display">0 pts</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 py-8">
+        
+        <section class="mb-12 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mb-3">Unlock the Mysteries of... Everything!</h2>
+            <p class="text-lg text-slate-600 max-w-2xl mx-auto">Tap a category, pick a question, and get ready for some mind-bending fun facts. Let the learning adventure begin!</p>
+        </section>
+
+        <section id="categories-section" class="mb-12">
+            <h3 class="text-2xl font-bold text-slate-700 mb-6">Choose Your Adventure:</h3>
+            <div id="categories-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+        </section>
+
+        <section id="questions-section" class="hidden">
+            <div class="flex items-center justify-between mb-6">
+                <button id="back-to-categories" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-lg inline-flex items-center transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                    All Categories
+                </button>
+                <h3 id="current-category-title" class="text-2xl font-bold text-slate-700 text-center flex-grow">Category Questions</h3>
+                <div class="w-28"></div> </div>
+             <div id="category-progress-container" class="mb-6">
+                <p class="text-sm text-slate-500 text-center mb-1">Category Progress:</p>
+                <div class="progress-bar-bg w-full h-4 rounded-full overflow-hidden">
+                    <div id="category-progress-bar" class="progress-bar-fill h-full rounded-full" style="width: 0%;"></div>
+                </div>
+            </div>
+            <div id="questions-grid" class="space-y-4">
+                </div>
+        </section>
+        
+        <section id="badges-section" class="mt-12">
+            <h3 class="text-2xl font-bold text-slate-700 mb-4 text-center">Your Awesome Badges!</h3>
+            <div id="badges-container" class="flex flex-wrap gap-4 justify-center items-center min-h-[50px]">
+                <p id="no-badges-message" class="text-slate-500">No badges unlocked yet. Keep learning!</p>
+                </div>
+        </section>
+
+    </main>
+
+    <div id="question-modal" class="modal fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 opacity-0 visibility-hidden z-50">
+        <div class="modal-content bg-gradient-to-br from-white to-slate-50 rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden border-4 border-blue-400">
+            <div class="p-6 border-b border-slate-200 bg-blue-500 text-white">
+                <div class="flex justify-between items-center">
+                    <h4 id="modal-question-text" class="text-xl font-bold">Question Text Here</h4>
+                    <button id="close-modal-button" class="text-blue-100 hover:text-white transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-6 flex-grow overflow-y-auto space-y-4">
+                <div id="audio-player-placeholder" class="text-center p-6 bg-slate-100 rounded-lg">
+                    <p class="text-slate-600 text-lg">🎧 Playing Audio... 🎧</p>
+                    <p class="text-sm text-slate-500 mt-2">(Audio simulation for now! Imagine insightful & funny narration here.)</p>
+                </div>
+                <div>
+                    <h5 class="text-lg font-semibold text-blue-600 mb-2">🤯 Mind-Blowing Fact:</h5>
+                    <p id="modal-fun-fact" class="text-slate-700 leading-relaxed bg-amber-100 p-3 rounded-md border border-amber-300">Fun fact will appear here.</p>
+                </div>
+            </div>
+            
+            <div class="p-4 bg-slate-100 border-t border-slate-200 text-right">
+                 <button id="mark-listened-button" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 px-6 rounded-lg transition-colors shadow-md hover:shadow-lg">
+                    Got It! (+<span id="modal-points-value">10</span> pts)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Mock Data ---
+        const categoriesData = [
+            {
+                id: "body", title: "🧠 Why Does My Body Do That?", description: "Explore weird, funny, and fascinating body quirks.", color: "border-red-400", icon: "🤸", badgeIcon: "🏆", badgeName: "Body Whiz",
+                questions: [
+                    { id: "q1-body", text: "Why do we say 'bless you' when someone sneezes?", audioUrl: "#", funFact: "The custom of saying 'bless you' dates back to ancient times when a sneeze was thought to expel evil spirits or be a sign of impending illness. Pope Gregory the Great in 600 AD even decreed it during a plague!", points: 10 },
+                    { id: "q2-body", text: "Why do onions make us cry?", audioUrl: "#", funFact: "Onions release a chemical called syn-propanethial-S-oxide. When it hits your eyes, it reacts with the water to form sulfuric acid. Ouch!", points: 10 },
+                    { id: "q3-body", text: "Why do we get goosebumps?", audioUrl: "#", funFact: "Goosebumps are a leftover reflex from our hairy ancestors. The tiny muscles at the base of each hair contract, making hairs stand up to trap more air for warmth or to appear larger to predators.", points: 10 },
+                ]
+            },
+            {
+                id: "nature", title: "🌍 Nature’s Little Mysteries", description: "Answers to quirky nature-related questions.", color: "border-green-400", icon: "🌳", badgeIcon: "🏅", badgeName: "Nature Navigator",
+                questions: [
+                    { id: "q1-nature", text: "Why do flamingos stand on one leg?", audioUrl: "#", funFact: "It's likely to conserve body heat! Standing on two legs in water would lose more heat. They also might do it to reduce muscle fatigue.", points: 10 },
+                    { id: "q2-nature", text: "Do ants sleep?", audioUrl: "#", funFact: "Yes, but not like we do! Ants take many short power naps throughout the day. Queen ants nap for about 9 minutes, up to 90 times a day!", points: 10 },
+                    { id: "q3-nature", text: "Why do cats purr?", audioUrl: "#", funFact: "Cats purr for many reasons: when they're happy, stressed, hungry, or even healing. The frequency of a cat's purr (25-150 Hz) can promote bone growth and repair!", points: 15 },
+                ]
+            },
+            {
+                id: "science", title: "⚡ Science in a Snap!", description: "Quick bursts of science to blow your mind.", color: "border-yellow-400", icon: "💡", badgeIcon: "🔬", badgeName: "Science Superstar",
+                questions: [
+                    { id: "q1-science", text: "Why is the sky blue but sunsets orange?", audioUrl: "#", funFact: "It's all about how sunlight scatters! Blue light scatters more than other colors because it travels as shorter, smaller waves. At sunset, sunlight passes through more atmosphere, scattering away the blue light and leaving reds and oranges.", points: 10 },
+                    { id: "q2-science", text: "What causes static electricity?", audioUrl: "#", funFact: "It's an imbalance of electric charges within or on the surface of a material. Rubbing two objects together can transfer electrons, creating the zap!", points: 10 },
+                ]
+            },
+            {
+                id: "tech", title: "📱 Tech Explained Like You're 5", description: "Make modern life’s oddities make sense.", color: "border-purple-400", icon: "🤖", badgeIcon: "⚙️", badgeName: "Tech Titan",
+                questions: [
+                    { id: "q1-tech", text: "How do QR codes actually work?", audioUrl: "#", funFact: "QR codes store information in a pattern of black and white squares. A scanner (like your phone camera) reads this pattern and decodes it into data, often a website link or text.", points: 10 },
+                    { id: "q2-tech", text: "Why does your voice sound weird on a recording?", audioUrl: "#", funFact: "When you speak, you hear your voice through air conduction (sound waves entering your ear canal) AND bone conduction (vibrations in your skull). Recordings only capture air conduction, so it sounds different!", points: 15 },
+                ]
+            }
+            // Add more categories from user prompt here
+        ];
+
+        let userData = {
+            totalPoints: 0,
+            unlockedBadges: [], // { categoryId: string, badgeIcon: string, badgeName: string }
+            listenedQuestions: {} // { "q1-body": true, "q2-nature": true }
+        };
+
+        // --- DOM Elements ---
+        const categoriesGrid = document.getElementById('categories-grid');
+        const questionsSection = document.getElementById('questions-section');
+        const categoriesSection = document.getElementById('categories-section');
+        const backToCategoriesButton = document.getElementById('back-to-categories');
+        const currentCategoryTitle = document.getElementById('current-category-title');
+        const questionsGrid = document.getElementById('questions-grid');
+        const userPointsDisplay = document.getElementById('user-points');
+        
+        const questionModal = document.getElementById('question-modal');
+        const modalQuestionText = document.getElementById('modal-question-text');
+        const modalFunFact = document.getElementById('modal-fun-fact');
+        const modalPointsValue = document.getElementById('modal-points-value');
+        const markListenedButton = document.getElementById('mark-listened-button');
+        const closeModalButton = document.getElementById('close-modal-button');
+
+        const categoryProgressBar = document.getElementById('category-progress-bar');
+        const badgesContainer = document.getElementById('badges-container');
+        const noBadgesMessage = document.getElementById('no-badges-message');
+
+        let activeCategory = null;
+        let activeQuestion = null;
+
+        // --- Gamification & UI Update Functions ---
+        function updatePointsDisplay() {
+            userPointsDisplay.textContent = `${userData.totalPoints} pts`;
+            userPointsDisplay.classList.add('points-update');
+            setTimeout(() => userPointsDisplay.classList.remove('points-update'), 300);
+        }
+
+        function updateCategoryProgress() {
+            if (!activeCategory) return;
+            const categoryData = categoriesData.find(c => c.id === activeCategory.id);
+            const listenedInCategory = categoryData.questions.filter(q => userData.listenedQuestions[q.id]).length;
+            const totalInCategory = categoryData.questions.length;
+            const progressPercentage = totalInCategory > 0 ? (listenedInCategory / totalInCategory) * 100 : 0;
+            categoryProgressBar.style.width = `${progressPercentage}%`;
+
+            if (listenedInCategory === totalInCategory && !userData.unlockedBadges.find(b => b.categoryId === categoryData.id)) {
+                unlockBadge(categoryData);
+            }
+        }
+        
+        function unlockBadge(categoryData) {
+            if (userData.unlockedBadges.find(b => b.categoryId === categoryData.id)) return; // Already unlocked
+
+            const newBadge = { categoryId: categoryData.id, badgeIcon: categoryData.badgeIcon, badgeName: categoryData.badgeName };
+            userData.unlockedBadges.push(newBadge);
+            
+            const badgeElement = document.createElement('div');
+            badgeElement.classList.add('badge', 'p-3', 'rounded-lg', 'text-center', 'shadow-md', 'bg-gradient-to-br', 'from-amber-300', 'to-orange-400', 'text-slate-800');
+            badgeElement.innerHTML = `
+                <div class="text-4xl">${categoryData.badgeIcon}</div>
+                <div class="text-sm font-semibold mt-1">${categoryData.badgeName}</div>
+            `;
+            badgesContainer.appendChild(badgeElement);
+            noBadgesMessage.classList.add('hidden');
+            saveUserData();
+        }
+
+        function displayBadges() {
+            badgesContainer.innerHTML = ''; // Clear existing
+             if (userData.unlockedBadges.length === 0) {
+                noBadgesMessage.classList.remove('hidden');
+            } else {
+                noBadgesMessage.classList.add('hidden');
+                userData.unlockedBadges.forEach(badge => {
+                    const badgeElement = document.createElement('div');
+                    badgeElement.classList.add('badge', 'p-3', 'rounded-lg', 'text-center', 'shadow-md', 'bg-gradient-to-br', 'from-amber-300', 'to-orange-400', 'text-slate-800');
+                    badgeElement.innerHTML = `
+                        <div class="text-4xl">${badge.badgeIcon}</div>
+                        <div class="text-sm font-semibold mt-1">${badge.badgeName}</div>
+                    `;
+                    badgesContainer.appendChild(badgeElement);
+                });
+            }
+        }
+
+
+        // --- Data Persistence (LocalStorage) ---
+        function saveUserData() {
+            localStorage.setItem('curioVerseUserData', JSON.stringify(userData));
+        }
+
+        function loadUserData() {
+            const savedData = localStorage.getItem('curioVerseUserData');
+            if (savedData) {
+                userData = JSON.parse(savedData);
+            }
+        }
+
+        // --- Display Functions ---
+        function displayCategories() {
+            categoriesGrid.innerHTML = '';
+            categoriesData.forEach(category => {
+                const card = document.createElement('div');
+                card.classList.add('category-card', 'p-6', 'bg-white', 'rounded-xl', 'shadow-lg', 'cursor-pointer', category.color);
+                card.innerHTML = `
+                    <div class="flex items-center mb-3">
+                        <span class="text-4xl mr-4">${category.icon}</span>
+                        <h4 class="text-xl font-bold text-slate-800">${category.title}</h4>
+                    </div>
+                    <p class="text-slate-600 text-sm mb-4">${category.description}</p>
+                    <div class="progress-bar-bg w-full h-2.5 rounded-full overflow-hidden mt-auto">
+                        <div id="progress-${category.id}" class="progress-bar-fill h-full rounded-full" style="width: 0%;"></div>
+                    </div>
+                `;
+                card.addEventListener('click', () => showQuestionsForCategory(category));
+                categoriesGrid.appendChild(card);
+                updateIndividualCategoryProgress(category.id); // Update progress on initial load
+            });
+            questionsSection.classList.add('hidden');
+            categoriesSection.classList.remove('hidden');
+        }
+        
+        function updateIndividualCategoryProgress(categoryId) {
+            const categoryData = categoriesData.find(c => c.id === categoryId);
+            if (!categoryData) return;
+            const listenedInCategory = categoryData.questions.filter(q => userData.listenedQuestions[q.id]).length;
+            const totalInCategory = categoryData.questions.length;
+            const progressPercentage = totalInCategory > 0 ? (listenedInCategory / totalInCategory) * 100 : 0;
+            const progressBarElement = document.getElementById(`progress-${categoryId}`);
+            if (progressBarElement) {
+                progressBarElement.style.width = `${progressPercentage}%`;
+            }
+        }
+
+
+        function showQuestionsForCategory(category) {
+            activeCategory = category;
+            categoriesSection.classList.add('hidden');
+            questionsSection.classList.remove('hidden');
+            currentCategoryTitle.innerHTML = `${category.icon} ${category.title}`;
+            questionsGrid.innerHTML = '';
+
+            category.questions.forEach(question => {
+                const questionCard = document.createElement('div');
+                questionCard.classList.add('question-card', 'p-4', 'bg-white', 'rounded-lg', 'shadow-sm', 'cursor-pointer', 'flex', 'justify-between', 'items-center');
+                if (userData.listenedQuestions[question.id]) {
+                    questionCard.classList.add('listened');
+                }
+                questionCard.innerHTML = `
+                    <span class="text-slate-700 flex-grow">${question.text}</span>
+                    ${userData.listenedQuestions[question.id] ? '<span class="text-green-500 text-2xl">✔</span>' : '<span class="text-blue-500 text-2xl">▶️</span>'}
+                `;
+                questionCard.addEventListener('click', () => openQuestionModal(question, category));
+                questionsGrid.appendChild(questionCard);
+            });
+            updateCategoryProgress();
+        }
+
+        function openQuestionModal(question, category) {
+            activeQuestion = question;
+            modalQuestionText.textContent = question.text;
+            modalFunFact.textContent = question.funFact;
+            modalPointsValue.textContent = question.points;
+            
+            markListenedButton.disabled = userData.listenedQuestions[question.id];
+            markListenedButton.textContent = userData.listenedQuestions[question.id] ? 'Already Listened!' : `Got It! (+${question.points} pts)`;
+            markListenedButton.classList.toggle('bg-slate-400', userData.listenedQuestions[question.id]);
+            markListenedButton.classList.toggle('cursor-not-allowed', userData.listenedQuestions[question.id]);
+            markListenedButton.classList.toggle('bg-green-500', !userData.listenedQuestions[question.id]);
+            markListenedButton.classList.toggle('hover:bg-green-600', !userData.listenedQuestions[question.id]);
+
+
+            questionModal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            questionModal.classList.remove('open');
+            document.body.style.overflow = '';
+            activeQuestion = null;
+        }
+
+        // --- Event Listeners ---
+        backToCategoriesButton.addEventListener('click', displayCategories);
+        closeModalButton.addEventListener('click', closeModal);
+        questionModal.addEventListener('click', (e) => { // Close on backdrop click
+            if (e.target === questionModal) closeModal();
+        });
+        document.addEventListener('keydown', (e) => { // Close with Escape key
+            if (e.key === 'Escape' && questionModal.classList.contains('open')) closeModal();
+        });
+
+        markListenedButton.addEventListener('click', () => {
+            if (activeQuestion && !userData.listenedQuestions[activeQuestion.id]) {
+                userData.listenedQuestions[activeQuestion.id] = true;
+                userData.totalPoints += activeQuestion.points;
+                
+                updatePointsDisplay();
+                showQuestionsForCategory(activeCategory); // Re-render questions to show checkmark
+                updateCategoryProgress();
+                categoriesData.forEach(cat => updateIndividualCategoryProgress(cat.id)); // Update all category progress bars on main page
+                saveUserData();
+                closeModal();
+            }
+        });
+
+        // --- Initial Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserData();
+            displayCategories();
+            updatePointsDisplay();
             displayBadges();
             categoriesData.forEach(cat => updateIndividualCategoryProgress(cat.id));
         });
