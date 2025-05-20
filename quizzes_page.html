@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizzes - CurioVerse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f0f4f8; /* Light background */
+        }
+        .header-title {
+            font-family: 'Fredoka One', cursive;
+            color: #3b82f6; /* Main blue */
+        }
+        .nav-link {
+            @apply text-slate-600 hover:text-blue-500 font-semibold px-3 py-2 rounded-md text-sm transition-colors;
+        }
+        .nav-link.active {
+            @apply text-blue-600 bg-blue-100;
+        }
+        .points-display {
+            /* animation if needed */
+        }
+        .quiz-category-tile {
+            @apply p-6 rounded-xl shadow-lg text-white flex flex-col items-center justify-center aspect-square transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-xl cursor-pointer;
+        }
+        /* Category specific colors for tiles */
+        .tile-body { background-image: linear-gradient(to br, #ef4444, #f87171); } /* Redish */
+        .tile-nature { background-image: linear-gradient(to br, #22c55e, #4ade80); } /* Greenish */
+        .tile-science { background-image: linear-gradient(to br, #eab308, #facc15); } /* Yellowish */
+        .tile-tech { background-image: linear-gradient(to br, #8b5cf6, #a78bfa); } /* Purplish */
+        /* Add more tile colors if more categories are added */
+
+        .super-quiz-tile {
+            @apply p-8 rounded-xl shadow-2xl text-white flex flex-col items-center justify-center transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl cursor-pointer col-span-1 md:col-span-2 lg:col-span-2; /* Span more on larger screens */
+            background-image: linear-gradient(to br, #3b82f6, #60a5fa, #93c5fd); /* Main blue gradient */
+        }
+        .tile-icon {
+            @apply text-5xl mb-3;
+        }
+        .tile-title {
+            @apply text-xl font-bold mb-1 text-center;
+        }
+        .tile-description {
+            @apply text-xs text-center opacity-90;
+        }
+    </style>
+</head>
+<body class="antialiased text-slate-700">
+
+    <header class="bg-white shadow-md sticky top-0 z-40 py-3">
+        <div class="container mx-auto px-4 sm:px-6 flex justify-between items-center">
+            <a href="index.html" class="header-title text-3xl md:text-4xl">CurioVerse</a>
+            <nav class="flex items-center space-x-2 md:space-x-4">
+                <a href="index.html" class="nav-link">Learn</a>
+                <a href="quizzes_page.html" class="nav-link active">Quizzes</a>
+            </nav>
+            <div class="text-right">
+                <p class="text-sm text-slate-500">Your Score:</p>
+                <p id="user-points" class="text-2xl font-bold text-amber-500 points-display">0 pts</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 py-8">
+        <section class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-slate-800 mb-3">🧐 CurioVerse Quiz Central 🏆</h2>
+            <p class="text-lg text-slate-600 max-w-2xl mx-auto">Pick a category to test your knowledge, or dare to take the Super Quiz challenge covering all topics!</p>
+        </section>
+
+        <section id="quizzes-selection-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <a href="quiz_start.html?type=super" class="super-quiz-tile">
+                <span class="tile-icon">🌟</span>
+                <h3 class="tile-title text-2xl">Super Quiz Challenge!</h3>
+                <p class="tile-description">Test your knowledge across ALL categories!</p>
+            </a>
+        </section>
+        <p id="no-categories-for-quiz" class="hidden text-center text-slate-500 text-lg py-10">No categories found to create quizzes!</p>
+    </main>
+
+    <script>
+        // --- Common Data (Should be in a shared JS file) ---
+        const categoriesData = [ // This data is needed to generate the quiz links
+             {
+                id: "body", title: "🧠 Why Does My Body Do That?", description: "Explore weird, funny, and fascinating body quirks.", color: "border-red-400", icon: "🤸", badgeIcon: "🏆", badgeName: "Body Whiz",
+                tileClass: "tile-body", // For styling the quiz tile
+                questions: [ /* ... questions ... */ ] 
+            },
+            {
+                id: "nature", title: "🌍 Nature’s Little Mysteries", description: "Answers to quirky nature-related questions.", color: "border-green-400", icon: "🌳", badgeIcon: "🏅", badgeName: "Nature Navigator",
+                tileClass: "tile-nature",
+                questions: [ /* ... questions ... */ ]
+            },
+            {
+                id: "science", title: "⚡ Science in a Snap!", description: "Quick bursts of science to blow your mind.", color: "border-yellow-400", icon: "💡", badgeIcon: "🔬", badgeName: "Science Superstar",
+                tileClass: "tile-science",
+                questions: [ /* ... questions ... */ ]
+            },
+            {
+                id: "tech", title: "📱 Tech Explained Like You're 5", description: "Make modern life’s oddities make sense.", color: "border-purple-400", icon: "🤖", badgeIcon: "⚙️", badgeName: "Tech Titan",
+                tileClass: "tile-tech",
+                questions: [ /* ... questions ... */ ]
+            }
+        ];
+
+        let userData = {
+            totalPoints: 0,
+            // ... other user data properties
+        };
+
+        function loadUserData() {
+            const savedData = localStorage.getItem('curioVerseUserData');
+            if (savedData) {
+                userData = JSON.parse(savedData);
+            }
+        }
+
+        function updatePointsDisplay() {
+            const userPointsDisplay = document.getElementById('user-points');
+            if (userPointsDisplay) {
+                userPointsDisplay.textContent = `${userData.totalPoints} pts`;
+            }
+        }
+
+        function displayQuizOptions() {
+            const quizGrid = document.getElementById('quizzes-selection-grid');
+            const noCategoriesMsg = document.getElementById('no-categories-for-quiz');
+            
+            // Clear existing tiles except potentially the static Super Quiz tile if it's not part of the loop
+            // For this example, let's assume the Super Quiz tile is static in HTML and we add category tiles before it.
+            const categoryTilesContainer = document.createDocumentFragment();
+
+
+            if (!categoriesData || categoriesData.length === 0) {
+                noCategoriesMsg.classList.remove('hidden');
+                return;
+            }
+            noCategoriesMsg.classList.add('hidden');
+
+            categoriesData.forEach(category => {
+                const tileLink = document.createElement('a');
+                // Placeholder for where the actual quiz for this category would start
+                // This could be a new page like quiz_start.html?category=categoryId
+                tileLink.href = `quiz_start.html?category=${category.id}`; 
+                tileLink.classList.add('quiz-category-tile', category.tileClass || 'bg-gray-500'); // Fallback bg
+                
+                tileLink.innerHTML = `
+                    <span class="tile-icon">${category.icon}</span>
+                    <h3 class="tile-title">${category.title.substring(2)} Quiz</h3> 
+                    <p class="tile-description">Test your knowledge on ${category.title.substring(2)}!</p>
+                `;
+                categoryTilesContainer.appendChild(tileLink);
+            });
+            
+            // Prepend category tiles before the super quiz tile if it's already in HTML
+            const superQuizTile = quizGrid.querySelector('.super-quiz-tile');
+            if (superQuizTile) {
+                quizGrid.insertBefore(categoryTilesContainer, superQuizTile);
+            } else {
+                quizGrid.appendChild(categoryTilesContainer); // Or append if super quiz is also dynamic
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserData();
+            updatePointsDisplay();
+            displayQuizOptions();
+
+            const currentPage = window.location.pathname.split("/").pop() || "quizzes_page.html";
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
