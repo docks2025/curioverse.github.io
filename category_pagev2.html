@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Questions - CurioVerse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .header-title {
+            font-family: 'Fredoka One', cursive;
+            color: #3b82f6;
+        }
+        .nav-link {
+            @apply text-slate-600 hover:text-blue-500 font-semibold px-3 py-2 rounded-md text-sm transition-colors;
+        }
+        .nav-link.active {
+            @apply text-blue-600 bg-blue-100;
+        }
+        .question-card {
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+        .question-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .question-card.listened {
+            background-color: #e0f2fe;
+            border-left-width: 4px;
+            border-left-color: #22c55e;
+        }
+        .modal {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            pointer-events: none;
+        }
+        .modal.open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .modal-content {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            transform: translateY(20px) scale(0.98);
+            opacity: 0;
+        }
+        .modal.open .modal-content {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+        .progress-bar-bg {
+            background-color: #e5e7eb;
+        }
+        .progress-bar-fill {
+            background-color: #3b82f6;
+            transition: width 0.5s ease-in-out;
+        }
+        .points-display { 
+            animation: points-update 0.3s ease-in-out;
+        }
+        @keyframes points-update {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); color: #22c55e; }
+            100% { transform: scale(1); }
+        }
+        .quiz-category-button {
+             @apply mt-8 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 ease-in-out inline-flex items-center text-base;
+        }
+        /* Style for the audio player */
+        #modal-audio-player {
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body class="antialiased text-slate-700">
+
+    <header class="bg-white shadow-md sticky top-0 z-40 py-3">
+        <div class="container mx-auto px-4 sm:px-6 flex justify-between items-center">
+             <a href="index.html" id="logoLink" class="header-title text-3xl md:text-4xl">CurioVerse</a>
+             <nav class="flex items-center space-x-2 md:space-x-4">
+                <a href="index.html" class="nav-link active">Learn</a> 
+                <a href="quizzes_page.html" class="nav-link">Quizzes</a>
+            </nav>
+            <div class="text-right">
+                <p class="text-sm text-slate-500">Your Score:</p>
+                <p id="user-points" class="text-2xl font-bold text-amber-500 points-display">0 pts</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 py-8">
+        <section id="questions-section">
+            <div class="flex items-center justify-between mb-6">
+                <a href="index.html" id="allCategoriesLink" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-lg inline-flex items-center transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                    All Categories
+                </a>
+                <h3 id="current-category-title" class="text-2xl md:text-3xl font-bold text-slate-700 text-center flex-grow">Category Questions</h3>
+                <div class="w-28 md:w-40"></div>
+             </div>
+             <div id="category-progress-container" class="mb-6">
+                <p class="text-sm text-slate-500 text-center mb-1">Category Progress:</p>
+                <div class="progress-bar-bg w-full h-4 rounded-full overflow-hidden">
+                    <div id="category-progress-bar" class="progress-bar-fill h-full rounded-full" style="width: 0%;"></div>
+                </div>
+            </div>
+            <div id="questions-grid" class="space-y-4">
+                {/* Questions will be injected here by JS */}
+            </div>
+             <p id="no-questions-message" class="hidden text-center text-slate-500 text-lg py-10">Hmm, no questions found for this category, or the category ID is missing!</p>
+            
+            <div id="quiz-link-container" class="text-center mt-10">
+                {/* Quiz link will be injected here by JS */}
+            </div>
+        </section>
+    </main>
+
+    <div id="question-modal" class="modal fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 opacity-0 visibility-hidden z-50">
+        <div class="modal-content bg-gradient-to-br from-white to-slate-50 rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden border-4 border-blue-400">
+            <div class="p-6 border-b border-slate-200 bg-blue-500 text-white">
+                <div class="flex justify-between items-center">
+                    <h4 id="modal-question-text" class="text-xl font-bold">Question Text Here</h4>
+                    <button id="close-modal-button" class="text-blue-100 hover:text-white transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6 flex-grow overflow-y-auto space-y-4">
+                <div id="audio-player-container" class="my-4">
+                    <audio id="modal-audio-player" controls style="width: 100%;">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+                <div>
+                    <h5 class="text-lg font-semibold text-blue-600 mb-2">🤯 Mind-Blowing Fact:</h5>
+                    <p id="modal-fun-fact" class="text-slate-700 leading-relaxed bg-amber-100 p-3 rounded-md border border-amber-300">Fun fact will appear here.</p>
+                </div>
+            </div>
+            <div class="p-4 bg-slate-100 border-t border-slate-200 text-right">
+                 <button id="mark-listened-button" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 px-6 rounded-lg transition-colors shadow-md hover:shadow-lg">
+                    Got It! (+<span id="modal-points-value">10</span> pts)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Main Categories Data Store ---
+        const categoriesData = [
+            {
+                id: "body", title: "🧠 Why Does My Body Do That?", description: "Explore weird, funny, and fascinating body quirks.", color: "border-red-400", icon: "🤸", badgeIcon: "🏆", badgeName: "Body Whiz",
+                questions: [ 
+                    { 
+                        id: "q1-body", 
+                        text: "Why do we say 'bless you' when someone sneezes?", 
+                        audioUrl: "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPOSITORY_NAME/main/audio/bless_you.mp3", 
+                        funFact: "The custom of saying 'bless you' dates back to ancient times when a sneeze was thought to expel evil spirits or be a sign of impending illness. Pope Gregory the Great in 600 AD even decreed it during a plague!", 
+                        points: 10 
+                    },
+                    { 
+                        id: "q2-body", 
+                        text: "Why do onions make us cry?", 
+                        audioUrl: "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPOSITORY_NAME/main/audio/onions_cry.mp3", 
+                        funFact: "Onions release a chemical called syn-propanethial-S-oxide. When it hits your eyes, it reacts with the water to form sulfuric acid. Ouch!", 
+                        points: 10 
+                    },
+                    { id: "q3-body", text: "Why do we get goosebumps?", audioUrl: "YOUR_AUDIO_URL_HERE/goosebumps.mp3", funFact: "Goosebumps are a leftover reflex from our hairy ancestors. They trap air for warmth or make us look bigger.", points: 10 },
+                    { id: "q4-body", text: "Why do hiccups happen, and how do you actually stop them?", audioUrl: "YOUR_AUDIO_URL_HERE/hiccups.mp3", funFact: "Hiccups are diaphragm spasms. Interrupting nerve signals (holding breath) can help!", points: 15 },
+                    { id: "q5-body", text: "Why do your fingers wrinkle in water?", audioUrl: "YOUR_AUDIO_URL_HERE/wrinkled_fingers.mp3", funFact: "Wrinkled fingers likely improve our grip on wet objects, like tire treads!", points: 10 },
+                    { id: "q6-body", text: "Why do we yawn — and why is it contagious?", audioUrl: "YOUR_AUDIO_URL_HERE/yawning.mp3", funFact: "Yawning might cool the brain. Contagious yawning is linked to empathy.", points: 10 },
+                    { id: "q7-body", text: "Why does your stomach growl when you're hungry?", audioUrl: "YOUR_AUDIO_URL_HERE/stomach_growl.mp3", funFact: "It's the sound of muscle contractions in your empty digestive system.", points: 10 },
+                    { id: "q8-body", text: "Can you tickle yourself? Why not?", audioUrl: "YOUR_AUDIO_URL_HERE/tickle.mp3", funFact: "Your brain anticipates your own touch, removing the surprise element.", points: 15 },
+                    { id: "q9-body", text: "Why do we sometimes get a song stuck in our head?", audioUrl: "YOUR_AUDIO_URL_HERE/earworm.mp3", funFact: "Called 'earworms,' often catchy tunes your brain tries to 'complete'.", points: 10 }
+                ]
+            },
+            {
+                id: "nature", title: "🌍 Nature’s Little Mysteries", description: "Answers to quirky nature-related questions.", color: "border-green-400", icon: "🌳", badgeIcon: "🏅", badgeName: "Nature Navigator",
+                questions: [
+                    { id: "q1-nature", text: "Why do flamingos stand on one leg?", audioUrl: "YOUR_AUDIO_URL_HERE/flamingos_one_leg.mp3", funFact: "Likely to conserve body heat and reduce muscle fatigue.", points: 10 },
+                    { id: "q2-nature", text: "Do ants sleep?", audioUrl: "YOUR_AUDIO_URL_HERE/ants_sleep.mp3", funFact: "Yes, they take many short power naps throughout the day!", points: 10 },
+                    { id: "q3-nature", text: "Why do cats purr?", audioUrl: "YOUR_AUDIO_URL_HERE/cats_purr.mp3", funFact: "For happiness, stress, or even to promote healing with low-frequency vibrations.", points: 15 },
+                    { id: "q4-nature", text: "Why don’t birds get electrocuted on power lines?", audioUrl: "YOUR_AUDIO_URL_HERE/birds_power_lines.mp3", funFact: "They don't complete an electrical circuit if they only touch one wire.", points: 10 },
+                    { id: "q5-nature", text: "Why do fireflies glow?", audioUrl: "YOUR_AUDIO_URL_HERE/fireflies_glow.mp3", funFact: "A chemical reaction called bioluminescence, mainly for attracting mates.", points: 10 },
+                    { id: "q6-nature", text: "Do fish ever get thirsty?", audioUrl: "YOUR_AUDIO_URL_HERE/fish_thirsty.mp3", funFact: "Saltwater fish drink seawater constantly; freshwater fish absorb water via osmosis.", points: 10 },
+                    { id: "q7-nature", text: "Why do leaves change color in the fall?", audioUrl: "YOUR_AUDIO_URL_HERE/leaves_fall_color.mp3", funFact: "As chlorophyll breaks down, other pigments like carotenoids (yellows/oranges) show through.", points: 10 },
+                    { id: "q8-nature", text: "How do trees know when it’s spring?", audioUrl: "YOUR_AUDIO_URL_HERE/trees_spring.mp3", funFact: "They sense increasing daylight hours and consistently warmer temperatures.", points: 10 }
+                ]
+            },
+            {
+                id: "science", title: "⚡ Science in a Snap!", description: "Quick bursts of science to blow your mind.", color: "border-yellow-400", icon: "💡", badgeIcon: "🔬", badgeName: "Science Superstar",
+                questions: [
+                    { id: "q1-science", text: "Why is the sky blue but sunsets orange?", audioUrl: "YOUR_AUDIO_URL_HERE/sky_sunset_color.mp3", funFact: "Sunlight scatters; blue light scatters most in the day, red/orange at sunset due to longer path.", points: 10 },
+                    { id: "q2-science", text: "What causes static electricity?", audioUrl: "YOUR_AUDIO_URL_HERE/static_electricity.mp3", funFact: "An imbalance of electric charges when electrons are transferred between objects.", points: 10 },
+                    { id: "q3-science", text: "Why doesn’t the moon fall to Earth?", audioUrl: "YOUR_AUDIO_URL_HERE/moon_orbit.mp3", funFact: "It's in a constant state of freefall *around* Earth, balanced by its sideways velocity.", points: 15 },
+                    { id: "q4-science", text: "What’s the difference between a virus and a bacteria?", audioUrl: "YOUR_AUDIO_URL_HERE/virus_vs_bacteria.mp3", funFact: "Bacteria are living single-celled organisms; viruses are non-living particles that need a host to replicate.", points: 10 },
+                    { id: "q5-science", text: "Why do some things glow in the dark?", audioUrl: "YOUR_AUDIO_URL_HERE/glow_in_dark.mp3", funFact: "Phosphorescent materials absorb energy from light and release it slowly as a glow.", points: 10 },
+                    { id: "q6-science", text: "How do microwave ovens heat food?", audioUrl: "YOUR_AUDIO_URL_HERE/microwaves.mp3", funFact: "They make water molecules in food vibrate rapidly, creating friction and heat.", points: 10 },
+                    { id: "q7-science", text: "Why do fizzy drinks fizz?", audioUrl: "YOUR_AUDIO_URL_HERE/fizzy_drinks.mp3", funFact: "Dissolved carbon dioxide gas escaping when the pressure is released.", points: 10 },
+                    { id: "q8-science", text: "Why does pineapple make your mouth tingle?", audioUrl: "YOUR_AUDIO_URL_HERE/pineapple_tingle.mp3", funFact: "An enzyme called bromelain breaks down proteins on the surface of your mouth.", points: 10 }
+                ]
+            },
+            {
+                id: "tech", title: "📱 Tech Explained Like You're 5", description: "Make modern life’s oddities make sense.", color: "border-purple-400", icon: "🤖", badgeIcon: "⚙️", badgeName: "Tech Titan",
+                questions: [
+                    { id: "q1-tech", text: "How do QR codes actually work?", audioUrl: "YOUR_AUDIO_URL_HERE/qr_codes.mp3", funFact: "They store information in a 2D pattern of black and white squares that scanners decode.", points: 10 },
+                    { id: "q2-tech", text: "Why does your voice sound weird on a recording?", audioUrl: "YOUR_AUDIO_URL_HERE/voice_recording.mp3", funFact: "Recordings miss the bone conduction component of how you normally hear your own voice.", points: 15 },
+                    { id: "q3-tech", text: "What does airplane mode actually do?", audioUrl: "YOUR_AUDIO_URL_HERE/airplane_mode.mp3", funFact: "It disables all wireless transmissions (cellular, Wi-Fi, Bluetooth) from your device.", points: 10 },
+                    { id: "q4-tech", text: "Why do phone screens crack so easily?", audioUrl: "YOUR_AUDIO_URL_HERE/phone_screens_crack.mp3", funFact: "The glass is hard to resist scratches, which also makes it brittle and prone to cracking on impact.", points: 10 },
+                    { id: "q5-tech", text: "Why does Wi-Fi sometimes work better in the bathroom?", audioUrl: "YOUR_AUDIO_URL_HERE/wifi_bathroom.mp3", funFact: "Often due to thinner walls or signal reflections creating a stronger local signal.", points: 10 },
+                    { id: "q6-tech", text: "Why do we press harder on the remote when the battery’s low?", audioUrl: "YOUR_AUDIO_URL_HERE/remote_press_harder.mp3", funFact: "It's a psychological habit; pressing harder doesn't increase the weak signal from dying batteries.", points: 10 }
+                ]
+            }
+        ];
+
+        let userData = {
+            totalPoints: 0,
+            unlockedBadges: [],
+            listenedQuestions: {}
+        };
+
+        // --- DOM Elements ---
+        // ... (rest of your DOM element getters)
+        const currentCategoryTitleElem = document.getElementById('current-category-title');
+        const questionsGridElem = document.getElementById('questions-grid');
+        const userPointsDisplayElem = document.getElementById('user-points');
+        const categoryProgressBarElem = document.getElementById('category-progress-bar');
+        const noQuestionsMessageElem = document.getElementById('no-questions-message');
+        const quizLinkContainer = document.getElementById('quiz-link-container');
+
+        const questionModalElem = document.getElementById('question-modal');
+        const modalQuestionTextElem = document.getElementById('modal-question-text');
+        const modalFunFactElem = document.getElementById('modal-fun-fact');
+        const modalPointsValueElem = document.getElementById('modal-points-value');
+        const markListenedButtonElem = document.getElementById('mark-listened-button');
+        const closeModalButtonElem = document.getElementById('close-modal-button');
+        const modalAudioPlayer = document.getElementById('modal-audio-player'); 
+
+        const logoLinkElem = document.getElementById('logoLink');
+        const allCategoriesLinkElem = document.getElementById('allCategoriesLink');
+        
+        let currentCategory = null;
+        let currentQuestion = null;
+
+
+        // --- Utility Functions ---
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // --- Gamification & UI Update Functions ---
+        function updatePointsDisplay() {
+            if (userPointsDisplayElem) {
+                userPointsDisplayElem.textContent = `${userData.totalPoints} pts`;
+            }
+        }
+
+        function saveUserData() {
+            localStorage.setItem('curioVerseUserData', JSON.stringify(userData));
+        }
+
+        function loadUserData() {
+            const savedData = localStorage.getItem('curioVerseUserData');
+            if (savedData) {
+                userData = JSON.parse(savedData);
+            }
+        }
+        
+        function unlockBadge(categoryData) { 
+            if (!categoryData || userData.unlockedBadges.find(b => b.categoryId === categoryData.id)) return; 
+            const newBadge = { categoryId: categoryData.id, badgeIcon: categoryData.badgeIcon, badgeName: categoryData.badgeName };
+            userData.unlockedBadges.push(newBadge);
+            saveUserData();
+        }
+
+        function updateCategoryPageProgress() {
+            if (!currentCategory || !categoryProgressBarElem) return;
+            const listenedInCategory = currentCategory.questions.filter(q => userData.listenedQuestions[q.id]).length;
+            const totalInCategory = currentCategory.questions.length;
+            const progressPercentage = totalInCategory > 0 ? (listenedInCategory / totalInCategory) * 100 : 0;
+            categoryProgressBarElem.style.width = `${progressPercentage}%`;
+
+            if (listenedInCategory === totalInCategory && !userData.unlockedBadges.find(b => b.categoryId === currentCategory.id)) {
+                unlockBadge(currentCategory);
+            }
+        }
+
+        // --- Display Functions for Category Page ---
+        function displayQuestionsForCategory() {
+            if (!currentCategory) {
+                if(currentCategoryTitleElem) currentCategoryTitleElem.textContent = "Category Not Found";
+                if(questionsGridElem) questionsGridElem.innerHTML = '';
+                if(noQuestionsMessageElem) noQuestionsMessageElem.classList.remove('hidden');
+                if(quizLinkContainer) quizLinkContainer.innerHTML = ''; 
+                return;
+            }
+
+            if(document) document.title = `${currentCategory.title} - CurioVerse`; 
+            if(currentCategoryTitleElem) currentCategoryTitleElem.innerHTML = `${currentCategory.icon} ${currentCategory.title}`;
+            if(questionsGridElem) questionsGridElem.innerHTML = '';
+            if(noQuestionsMessageElem) noQuestionsMessageElem.classList.add('hidden');
+
+            currentCategory.questions.forEach(question => {
+                const questionCard = document.createElement('div');
+                questionCard.classList.add('question-card', 'p-4', 'bg-white', 'rounded-lg', 'shadow-sm', 'cursor-pointer', 'flex', 'justify-between', 'items-center');
+                if (userData.listenedQuestions[question.id]) {
+                    questionCard.classList.add('listened');
+                }
+                questionCard.innerHTML = `
+                    <span class="text-slate-700 flex-grow">${question.text}</span>
+                    ${userData.listenedQuestions[question.id] ? '<span class="text-green-500 text-2xl">✔</span>' : '<span class="text-blue-500 text-2xl">▶️</span>'}
+                `;
+                questionCard.addEventListener('click', () => openQuestionModal(question));
+                if(questionsGridElem) questionsGridElem.appendChild(questionCard);
+            });
+            updateCategoryPageProgress();
+
+            if(quizLinkContainer) {
+                quizLinkContainer.innerHTML = `
+                    <a href="quizzes_page.html?category=${currentCategory.id}" class="quiz-category-button">
+                        Test Your Knowledge on "${currentCategory.title.substring(2)}"
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </a>`;
+            }
+        }
+
+        function openQuestionModal(question) {
+            currentQuestion = question;
+            if(modalQuestionTextElem) modalQuestionTextElem.textContent = question.text;
+            if(modalFunFactElem) modalFunFactElem.textContent = question.funFact;
+            if(modalPointsValueElem) modalPointsValueElem.textContent = question.points;
+            
+            if (modalAudioPlayer) {
+                if (question.audioUrl && question.audioUrl.trim() !== "" && question.audioUrl !== "#") { 
+                    modalAudioPlayer.src = question.audioUrl;
+                    modalAudioPlayer.load(); 
+                    document.getElementById('audio-player-container').style.display = 'block';
+                } else {
+                    modalAudioPlayer.src = ""; 
+                    document.getElementById('audio-player-container').style.display = 'none';
+                }
+            }
+            
+            if(markListenedButtonElem) {
+                markListenedButtonElem.disabled = !!userData.listenedQuestions[question.id];
+                markListenedButtonElem.textContent = userData.listenedQuestions[question.id] ? 'Already Listened!' : `Got It! (+${question.points} pts)`;
+                markListenedButtonElem.classList.toggle('bg-slate-400', !!userData.listenedQuestions[question.id]);
+                markListenedButtonElem.classList.toggle('cursor-not-allowed', !!userData.listenedQuestions[question.id]);
+                markListenedButtonElem.classList.toggle('bg-green-500', !userData.listenedQuestions[question.id]);
+                markListenedButtonElem.classList.toggle('hover:bg-green-600', !userData.listenedQuestions[question.id]);
+            }
+
+            if(questionModalElem) questionModalElem.classList.add('open');
+            if(document && document.body) document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            if(questionModalElem) questionModalElem.classList.remove('open');
+            if(document && document.body) document.body.style.overflow = '';
+            currentQuestion = null;
+
+            if (modalAudioPlayer) {
+                modalAudioPlayer.pause(); 
+                modalAudioPlayer.src = "";  
+            }
+        }
+
+        // --- Event Listeners for Category Page ---
+        if(closeModalButtonElem) closeModalButtonElem.addEventListener('click', closeModal);
+        if(questionModalElem) {
+            questionModalElem.addEventListener('click', (e) => {
+                if (e.target === questionModalElem) closeModal();
+            });
+        }
+        if(document) {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && questionModalElem && questionModalElem.classList.contains('open')) closeModal();
+            });
+        }
+
+        if(markListenedButtonElem) {
+            markListenedButtonElem.addEventListener('click', () => {
+                if (currentQuestion && !userData.listenedQuestions[currentQuestion.id]) {
+                    userData.listenedQuestions[currentQuestion.id] = true;
+                    userData.totalPoints += currentQuestion.points;
+                    
+                    updatePointsDisplay();
+                    displayQuestionsForCategory(); 
+                    saveUserData(); 
+                    
+                     markListenedButtonElem.disabled = true;
+                     markListenedButtonElem.textContent = 'Already Listened!';
+                     markListenedButtonElem.classList.add('bg-slate-400', 'cursor-not-allowed');
+                     markListenedButtonElem.classList.remove('bg-green-500', 'hover:bg-green-600');
+                }
+            });
+        }
+        
+        if (logoLinkElem) {
+            logoLinkElem.addEventListener('click', function(event) {
+                console.log('CurioVerse logo link clicked. Href:', this.href);
+            });
+        }
+
+        if (allCategoriesLinkElem) {
+            allCategoriesLinkElem.addEventListener('click', function(event) {
+                console.log('"All Categories" link clicked. Href:', this.href);
+            });
+        }
+
+        // --- Initial Load for category_page.html ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserData(); 
+
+            const categoryId = getQueryParam('id');
+            if (categoryId) {
+                currentCategory = categoriesData.find(cat => cat.id === categoryId);
+            }
+            
+            displayQuestionsForCategory(); 
+            updatePointsDisplay(); 
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === 'index.html') { 
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
