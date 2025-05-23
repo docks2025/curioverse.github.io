@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Category Questions - CurioVerse</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Category Questions - CurioVerse</title> <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
     <style>
         body {
@@ -57,7 +56,7 @@
             background-color: #3b82f6;
             transition: width 0.5s ease-in-out;
         }
-        .points-display {
+        .points-display { 
             animation: points-update 0.3s ease-in-out;
         }
         @keyframes points-update {
@@ -74,8 +73,7 @@
 
     <header class="bg-white shadow-md sticky top-0 z-40 py-3">
         <div class="container mx-auto px-4 sm:px-6 flex justify-between items-center">
-             <a href="index.html" class="header-title text-3xl md:text-4xl">CurioVerse</a>
-            <nav class="flex items-center space-x-2 md:space-x-4">
+             <a href="index.html" id="logoLink" class="header-title text-3xl md:text-4xl">CurioVerse</a> <nav class="flex items-center space-x-2 md:space-x-4">
                 <a href="index.html" class="nav-link active">Learn</a> <a href="quizzes_page.html" class="nav-link">Quizzes</a>
             </nav>
             <div class="text-right">
@@ -88,15 +86,14 @@
     <main class="container mx-auto px-4 sm:px-6 py-8">
         <section id="questions-section">
             <div class="flex items-center justify-between mb-6">
-                <a href="index.html" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-lg inline-flex items-center transition-colors">
+                <a href="index.html" id="allCategoriesLink" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-lg inline-flex items-center transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
                     </svg>
                     All Categories
                 </a>
                 <h3 id="current-category-title" class="text-2xl md:text-3xl font-bold text-slate-700 text-center flex-grow">Category Questions</h3>
-                <div class="w-28 md:w-40"></div> 
-            </div>
+                <div class="w-28 md:w-40"></div> </div>
              <div id="category-progress-container" class="mb-6">
                 <p class="text-sm text-slate-500 text-center mb-1">Category Progress:</p>
                 <div class="progress-bar-bg w-full h-4 rounded-full overflow-hidden">
@@ -105,7 +102,7 @@
             </div>
             <div id="questions-grid" class="space-y-4">
                 </div>
-            <p id="no-questions-message" class="hidden text-center text-slate-500 text-lg py-10">Hmm, no questions found for this category, or the category ID is missing!</p>
+             <p id="no-questions-message" class="hidden text-center text-slate-500 text-lg py-10">Hmm, no questions found for this category, or the category ID is missing!</p>
             
             <div id="quiz-link-container" class="text-center mt-10">
                 </div>
@@ -144,13 +141,36 @@
 
     <script>
         // --- Common Data ---
+        // Ensure this categoriesData is identical to the one in index.html and other relevant pages
+        // or ideally loaded from a shared .js file.
         const categoriesData = [
              {
                 id: "body", title: "🧠 Why Does My Body Do That?", description: "Explore weird, funny, and fascinating body quirks.", color: "border-red-400", icon: "🤸", badgeIcon: "🏆", badgeName: "Body Whiz",
-                questions: [ /* ... questions as in index.html ... */ ]
+                questions: [ 
+                    { id: "q1-body", text: "Why do we say 'bless you' when someone sneezes?", audioUrl: "#", funFact: "The custom of saying 'bless you' dates back to ancient times when a sneeze was thought to expel evil spirits or be a sign of impending illness. Pope Gregory the Great in 600 AD even decreed it during a plague!", points: 10 },
+                    { id: "q2-body", text: "Why do onions make us cry?", audioUrl: "#", funFact: "Onions release a chemical called syn-propanethial-S-oxide. When it hits your eyes, it reacts with the water to form sulfuric acid. Ouch!", points: 10 },
+                    { id: "q3-body", text: "Why do we get goosebumps?", audioUrl: "#", funFact: "Goosebumps are a leftover reflex from our hairy ancestors. The tiny muscles at the base of each hair contract, making hairs stand up to trap more air for warmth or to appear larger to predators.", points: 10 },
+                    { id: "q4-body", text: "Why do hiccups happen, and how do you actually stop them?", audioUrl: "#", funFact: "Hiccups are involuntary spasms of your diaphragm. Holding your breath or drinking water upside down can sometimes interrupt the nerve signals causing the spasms!", points: 15 },
+                    { id: "q5-body", text: "Why do your fingers wrinkle in water?", audioUrl: "#", funFact: "It's not just water absorption! Scientists believe wrinkled fingers improve our grip on wet objects, an evolutionary trait like tire treads for better traction.", points: 10 },
+                    { id: "q6-body", text: "Why do we yawn — and why is it contagious?", audioUrl: "#", funFact: "Yawning might help cool the brain! Contagious yawning is linked to empathy and social bonding – you're more likely to 'catch' a yawn from someone you're close to.", points: 10 },
+                    { id: "q7-body", text: "Why does your stomach growl when you're hungry?", audioUrl: "#", funFact: "That 'growl' (borborygmus) is the sound of muscles in your stomach and intestines contracting to push food, liquid, and gas through. It happens all the time, but it's louder when your stomach is empty!", points: 10 },
+                    { id: "q8-body", text: "Can you tickle yourself? Why not?", audioUrl: "#", funFact: "Probably not! Your brain anticipates your own touch and cancels out the ticklish sensation. The surprise element is key for tickling!", points: 15 },
+                    { id: "q9-body", text: "Why do we sometimes get a song stuck in our head?", audioUrl: "#", funFact: "These 'earworms' often happen with catchy, repetitive tunes. Your brain might be trying to 'complete' an unfinished musical pattern or it's just a sign of an overactive auditory cortex.", points: 10 }
+                ]
             },
-            { /* ... other categories ... */ }
-        ]; // Ensure full data is here
+            {
+                id: "nature", title: "🌍 Nature’s Little Mysteries", description: "Answers to quirky nature-related questions.", color: "border-green-400", icon: "🌳", badgeIcon: "🏅", badgeName: "Nature Navigator",
+                questions: [ /* ... questions ... */ ]
+            },
+            {
+                id: "science", title: "⚡ Science in a Snap!", description: "Quick bursts of science to blow your mind.", color: "border-yellow-400", icon: "💡", badgeIcon: "🔬", badgeName: "Science Superstar",
+                questions: [ /* ... questions ... */ ]
+            },
+            {
+                id: "tech", title: "📱 Tech Explained Like You're 5", description: "Make modern life’s oddities make sense.", color: "border-purple-400", icon: "🤖", badgeIcon: "⚙️", badgeName: "Tech Titan",
+                questions: [ /* ... questions ... */ ]
+            }
+        ];
 
         let userData = {
             totalPoints: 0,
@@ -173,6 +193,11 @@
         const markListenedButtonElem = document.getElementById('mark-listened-button');
         const closeModalButtonElem = document.getElementById('close-modal-button');
 
+        // Links for debugging
+        const logoLinkElem = document.getElementById('logoLink');
+        const allCategoriesLinkElem = document.getElementById('allCategoriesLink');
+
+
         let currentCategory = null;
         let currentQuestion = null;
 
@@ -184,7 +209,9 @@
 
         // --- Gamification & UI Update Functions ---
         function updatePointsDisplay() {
-            userPointsDisplayElem.textContent = `${userData.totalPoints} pts`;
+            if (userPointsDisplayElem) {
+                userPointsDisplayElem.textContent = `${userData.totalPoints} pts`;
+            }
         }
 
         function saveUserData() {
@@ -206,7 +233,7 @@
         }
 
         function updateCategoryPageProgress() {
-            if (!currentCategory) return;
+            if (!currentCategory || !categoryProgressBarElem) return;
             const listenedInCategory = currentCategory.questions.filter(q => userData.listenedQuestions[q.id]).length;
             const totalInCategory = currentCategory.questions.length;
             const progressPercentage = totalInCategory > 0 ? (listenedInCategory / totalInCategory) * 100 : 0;
@@ -220,17 +247,17 @@
         // --- Display Functions for Category Page ---
         function displayQuestionsForCategory() {
             if (!currentCategory) {
-                currentCategoryTitleElem.textContent = "Category Not Found";
-                questionsGridElem.innerHTML = '';
-                noQuestionsMessageElem.classList.remove('hidden');
-                quizLinkContainer.innerHTML = ''; // Clear quiz link
+                if(currentCategoryTitleElem) currentCategoryTitleElem.textContent = "Category Not Found";
+                if(questionsGridElem) questionsGridElem.innerHTML = '';
+                if(noQuestionsMessageElem) noQuestionsMessageElem.classList.remove('hidden');
+                if(quizLinkContainer) quizLinkContainer.innerHTML = ''; 
                 return;
             }
 
-            document.title = `${currentCategory.title} - CurioVerse`; 
-            currentCategoryTitleElem.innerHTML = `${currentCategory.icon} ${currentCategory.title}`;
-            questionsGridElem.innerHTML = '';
-            noQuestionsMessageElem.classList.add('hidden');
+            if(document) document.title = `${currentCategory.title} - CurioVerse`; 
+            if(currentCategoryTitleElem) currentCategoryTitleElem.innerHTML = `${currentCategory.icon} ${currentCategory.title}`;
+            if(questionsGridElem) questionsGridElem.innerHTML = '';
+            if(noQuestionsMessageElem) noQuestionsMessageElem.classList.add('hidden');
 
             currentCategory.questions.forEach(question => {
                 const questionCard = document.createElement('div');
@@ -243,63 +270,89 @@
                     ${userData.listenedQuestions[question.id] ? '<span class="text-green-500 text-2xl">✔</span>' : '<span class="text-blue-500 text-2xl">▶️</span>'}
                 `;
                 questionCard.addEventListener('click', () => openQuestionModal(question));
-                questionsGridElem.appendChild(questionCard);
+                if(questionsGridElem) questionsGridElem.appendChild(questionCard);
             });
             updateCategoryPageProgress();
 
-            // Add quiz link for this category
-            quizLinkContainer.innerHTML = `
-                <a href="quizzes_page.html?category=${currentCategory.id}" class="quiz-category-button">
-                    Test Your Knowledge on "${currentCategory.title.substring(2)}"
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
-                    </svg>
-                </a>`;
+            if(quizLinkContainer) {
+                quizLinkContainer.innerHTML = `
+                    <a href="quizzes_page.html?category=${currentCategory.id}" class="quiz-category-button">
+                        Test Your Knowledge on "${currentCategory.title.substring(2)}"
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </a>`;
+            }
         }
 
         function openQuestionModal(question) {
             currentQuestion = question;
-            modalQuestionTextElem.textContent = question.text;
-            modalFunFactElem.textContent = question.funFact;
-            modalPointsValueElem.textContent = question.points;
+            if(modalQuestionTextElem) modalQuestionTextElem.textContent = question.text;
+            if(modalFunFactElem) modalFunFactElem.textContent = question.funFact;
+            if(modalPointsValueElem) modalPointsValueElem.textContent = question.points;
             
-            markListenedButtonElem.disabled = userData.listenedQuestions[question.id];
-            markListenedButtonElem.textContent = userData.listenedQuestions[question.id] ? 'Already Listened!' : `Got It! (+${question.points} pts)`;
-            markListenedButtonElem.classList.toggle('bg-slate-400', userData.listenedQuestions[question.id]);
-            markListenedButtonElem.classList.toggle('cursor-not-allowed', userData.listenedQuestions[question.id]);
-            markListenedButtonElem.classList.toggle('bg-green-500', !userData.listenedQuestions[question.id]);
-            markListenedButtonElem.classList.toggle('hover:bg-green-600', !userData.listenedQuestions[question.id]);
+            if(markListenedButtonElem) {
+                markListenedButtonElem.disabled = userData.listenedQuestions[question.id];
+                markListenedButtonElem.textContent = userData.listenedQuestions[question.id] ? 'Already Listened!' : `Got It! (+${question.points} pts)`;
+                markListenedButtonElem.classList.toggle('bg-slate-400', !!userData.listenedQuestions[question.id]);
+                markListenedButtonElem.classList.toggle('cursor-not-allowed', !!userData.listenedQuestions[question.id]);
+                markListenedButtonElem.classList.toggle('bg-green-500', !userData.listenedQuestions[question.id]);
+                markListenedButtonElem.classList.toggle('hover:bg-green-600', !userData.listenedQuestions[question.id]);
+            }
 
-            questionModalElem.classList.add('open');
-            document.body.style.overflow = 'hidden';
+            if(questionModalElem) questionModalElem.classList.add('open');
+            if(document && document.body) document.body.style.overflow = 'hidden';
         }
 
         function closeModal() {
-            questionModalElem.classList.remove('open');
-            document.body.style.overflow = '';
+            if(questionModalElem) questionModalElem.classList.remove('open');
+            if(document && document.body) document.body.style.overflow = '';
             currentQuestion = null;
         }
 
         // --- Event Listeners for Category Page ---
-        closeModalButtonElem.addEventListener('click', closeModal);
-        questionModalElem.addEventListener('click', (e) => {
-            if (e.target === questionModalElem) closeModal();
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && questionModalElem.classList.contains('open')) closeModal();
-        });
+        if(closeModalButtonElem) closeModalButtonElem.addEventListener('click', closeModal);
+        if(questionModalElem) {
+            questionModalElem.addEventListener('click', (e) => {
+                if (e.target === questionModalElem) closeModal();
+            });
+        }
+        if(document) {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && questionModalElem && questionModalElem.classList.contains('open')) closeModal();
+            });
+        }
 
-        markListenedButtonElem.addEventListener('click', () => {
-            if (currentQuestion && !userData.listenedQuestions[currentQuestion.id]) {
-                userData.listenedQuestions[currentQuestion.id] = true;
-                userData.totalPoints += currentQuestion.points;
-                
-                updatePointsDisplay();
-                displayQuestionsForCategory(); 
-                saveUserData(); 
-                closeModal();
-            }
-        });
+        if(markListenedButtonElem) {
+            markListenedButtonElem.addEventListener('click', () => {
+                if (currentQuestion && !userData.listenedQuestions[currentQuestion.id]) {
+                    userData.listenedQuestions[currentQuestion.id] = true;
+                    userData.totalPoints += currentQuestion.points;
+                    
+                    updatePointsDisplay();
+                    displayQuestionsForCategory(); 
+                    saveUserData(); 
+                    closeModal();
+                }
+            });
+        }
+        
+        // --- DEBUGGING CLICK LISTENERS ---
+        if (logoLinkElem) {
+            logoLinkElem.addEventListener('click', function(event) {
+                console.log('CurioVerse logo link clicked. Href:', this.href);
+                // Default navigation will proceed unless event.preventDefault() is called.
+            });
+        }
+
+        if (allCategoriesLinkElem) {
+            allCategoriesLinkElem.addEventListener('click', function(event) {
+                console.log('"All Categories" link clicked. Href:', this.href);
+                // Default navigation will proceed unless event.preventDefault() is called.
+            });
+        }
+        // --- END DEBUGGING CLICK LISTENERS ---
+
 
         // --- Initial Load for category_page.html ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -307,46 +360,7 @@
 
             const categoryId = getQueryParam('id');
             if (categoryId) {
-                // Make sure to use the full categoriesData from this page's script
-                const localCategoriesData = [
-                     {
-                        id: "body", title: "🧠 Why Does My Body Do That?", description: "Explore weird, funny, and fascinating body quirks.", color: "border-red-400", icon: "🤸", badgeIcon: "🏆", badgeName: "Body Whiz",
-                        questions: [ 
-                            { id: "q1-body", text: "Why do we say 'bless you' when someone sneezes?", audioUrl: "#", funFact: "The custom of saying 'bless you' dates back to ancient times when a sneeze was thought to expel evil spirits or be a sign of impending illness. Pope Gregory the Great in 600 AD even decreed it during a plague!", points: 10 },
-                            { id: "q2-body", text: "Why do onions make us cry?", audioUrl: "#", funFact: "Onions release a chemical called syn-propanethial-S-oxide. When it hits your eyes, it reacts with the water to form sulfuric acid. Ouch!", points: 10 },
-                            { id: "q3-body", text: "Why do we get goosebumps?", audioUrl: "#", funFact: "Goosebumps are a leftover reflex from our hairy ancestors. The tiny muscles at the base of each hair contract, making hairs stand up to trap more air for warmth or to appear larger to predators.", points: 10 },
-                            { id: "q4-body", text: "Why do hiccups happen, and how do you actually stop them?", audioUrl: "#", funFact: "Hiccups are involuntary spasms of your diaphragm. Holding your breath or drinking water upside down can sometimes interrupt the nerve signals causing the spasms!", points: 15 },
-                            { id: "q5-body", text: "Why do your fingers wrinkle in water?", audioUrl: "#", funFact: "It's not just water absorption! Scientists believe wrinkled fingers improve our grip on wet objects, an evolutionary trait like tire treads for better traction.", points: 10 },
-                            { id: "q6-body", text: "Why do we yawn — and why is it contagious?", audioUrl: "#", funFact: "Yawning might help cool the brain! Contagious yawning is linked to empathy and social bonding – you're more likely to 'catch' a yawn from someone you're close to.", points: 10 },
-                            { id: "q7-body", text: "Why does your stomach growl when you're hungry?", audioUrl: "#", funFact: "That 'growl' (borborygmus) is the sound of muscles in your stomach and intestines contracting to push food, liquid, and gas through. It happens all the time, but it's louder when your stomach is empty!", points: 10 },
-                            { id: "q8-body", text: "Can you tickle yourself? Why not?", audioUrl: "#", funFact: "Probably not! Your brain anticipates your own touch and cancels out the ticklish sensation. The surprise element is key for tickling!", points: 15 },
-                            { id: "q9-body", text: "Why do we sometimes get a song stuck in our head?", audioUrl: "#", funFact: "These 'earworms' often happen with catchy, repetitive tunes. Your brain might be trying to 'complete' an unfinished musical pattern or it's just a sign of an overactive auditory cortex.", points: 10 }
-                        ]
-                    },
-                    {
-                        id: "nature", title: "🌍 Nature’s Little Mysteries", description: "Answers to quirky nature-related questions.", color: "border-green-400", icon: "🌳", badgeIcon: "🏅", badgeName: "Nature Navigator",
-                        questions: [
-                            { id: "q1-nature", text: "Why do flamingos stand on one leg?", audioUrl: "#", funFact: "It's likely to conserve body heat! Standing on two legs in water would lose more heat. They also might do it to reduce muscle fatigue.", points: 10 },
-                            { id: "q2-nature", text: "Do ants sleep?", audioUrl: "#", funFact: "Yes, but not like we do! Ants take many short power naps throughout the day. Queen ants nap for about 9 minutes, up to 90 times a day!", points: 10 },
-                            { id: "q3-nature", text: "Why do cats purr?", audioUrl: "#", funFact: "Cats purr for many reasons: when they're happy, stressed, hungry, or even healing. The frequency of a cat's purr (25-150 Hz) can promote bone growth and repair!", points: 15 },
-                        ]
-                    },
-                    {
-                        id: "science", title: "⚡ Science in a Snap!", description: "Quick bursts of science to blow your mind.", color: "border-yellow-400", icon: "💡", badgeIcon: "🔬", badgeName: "Science Superstar",
-                        questions: [
-                            { id: "q1-science", text: "Why is the sky blue but sunsets orange?", audioUrl: "#", funFact: "It's all about how sunlight scatters! Blue light scatters more than other colors because it travels as shorter, smaller waves. At sunset, sunlight passes through more atmosphere, scattering away the blue light and leaving reds and oranges.", points: 10 },
-                            { id: "q2-science", text: "What causes static electricity?", audioUrl: "#", funFact: "It's an imbalance of electric charges within or on the surface of a material. Rubbing two objects together can transfer electrons, creating the zap!", points: 10 },
-                        ]
-                    },
-                    {
-                        id: "tech", title: "📱 Tech Explained Like You're 5", description: "Make modern life’s oddities make sense.", color: "border-purple-400", icon: "🤖", badgeIcon: "⚙️", badgeName: "Tech Titan",
-                        questions: [
-                            { id: "q1-tech", text: "How do QR codes actually work?", audioUrl: "#", funFact: "QR codes store information in a pattern of black and white squares. A scanner (like your phone camera) reads this pattern and decodes it into data, often a website link or text.", points: 10 },
-                            { id: "q2-tech", text: "Why does your voice sound weird on a recording?", audioUrl: "#", funFact: "When you speak, you hear your voice through air conduction (sound waves entering your ear canal) AND bone conduction (vibrations in your skull). Recordings only capture air conduction, so it sounds different!", points: 15 },
-                        ]
-                    }
-                ];
-                currentCategory = localCategoriesData.find(cat => cat.id === categoryId);
+                currentCategory = categoriesData.find(cat => cat.id === categoryId);
             }
             
             displayQuestionsForCategory(); 
@@ -355,7 +369,6 @@
             // Nav link highlighting
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
-                // 'Learn' should be active since this is a sub-page of learning categories
                 if (link.getAttribute('href') === 'index.html') { 
                     link.classList.add('active');
                 }
