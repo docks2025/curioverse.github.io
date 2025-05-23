@@ -35,15 +35,19 @@
         }
         .modal {
             transition: opacity 0.3s ease, visibility 0.3s ease;
+            /* MODIFICATION: Ensure modal doesn't intercept events when hidden */
+            pointer-events: none;
+        }
+        .modal.open {
+            opacity: 1;
+            visibility: visible;
+            /* MODIFICATION: Allow events when modal is open */
+            pointer-events: auto;
         }
         .modal-content {
             transition: transform 0.3s ease, opacity 0.3s ease;
             transform: translateY(20px) scale(0.98);
             opacity: 0;
-        }
-        .modal.open {
-            opacity: 1;
-            visibility: visible;
         }
         .modal.open .modal-content {
             transform: translateY(0) scale(1);
@@ -141,8 +145,6 @@
 
     <script>
         // --- Common Data ---
-        // Ensure this categoriesData is identical to the one in index.html and other relevant pages
-        // or ideally loaded from a shared .js file.
         const categoriesData = [
              {
                 id: "body", title: "🧠 Why Does My Body Do That?", description: "Explore weird, funny, and fascinating body quirks.", color: "border-red-400", icon: "🤸", badgeIcon: "🏆", badgeName: "Body Whiz",
@@ -193,7 +195,6 @@
         const markListenedButtonElem = document.getElementById('mark-listened-button');
         const closeModalButtonElem = document.getElementById('close-modal-button');
 
-        // Links for debugging
         const logoLinkElem = document.getElementById('logoLink');
         const allCategoriesLinkElem = document.getElementById('allCategoriesLink');
 
@@ -341,14 +342,12 @@
         if (logoLinkElem) {
             logoLinkElem.addEventListener('click', function(event) {
                 console.log('CurioVerse logo link clicked. Href:', this.href);
-                // Default navigation will proceed unless event.preventDefault() is called.
             });
         }
 
         if (allCategoriesLinkElem) {
             allCategoriesLinkElem.addEventListener('click', function(event) {
                 console.log('"All Categories" link clicked. Href:', this.href);
-                // Default navigation will proceed unless event.preventDefault() is called.
             });
         }
         // --- END DEBUGGING CLICK LISTENERS ---
@@ -366,7 +365,6 @@
             displayQuestionsForCategory(); 
             updatePointsDisplay(); 
 
-            // Nav link highlighting
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
                 if (link.getAttribute('href') === 'index.html') { 
