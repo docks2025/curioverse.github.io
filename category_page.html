@@ -35,13 +35,11 @@
         }
         .modal {
             transition: opacity 0.3s ease, visibility 0.3s ease;
-            /* MODIFICATION: Ensure modal doesn't intercept events when hidden */
             pointer-events: none;
         }
         .modal.open {
             opacity: 1;
             visibility: visible;
-            /* MODIFICATION: Allow events when modal is open */
             pointer-events: auto;
         }
         .modal-content {
@@ -77,8 +75,10 @@
 
     <header class="bg-white shadow-md sticky top-0 z-40 py-3">
         <div class="container mx-auto px-4 sm:px-6 flex justify-between items-center">
-             <a href="index.html" id="logoLink" class="header-title text-3xl md:text-4xl">CurioVerse</a> <nav class="flex items-center space-x-2 md:space-x-4">
-                <a href="index.html" class="nav-link active">Learn</a> <a href="quizzes_page.html" class="nav-link">Quizzes</a>
+             <a href="index.html" id="logoLink" class="header-title text-3xl md:text-4xl">CurioVerse</a>
+             <nav class="flex items-center space-x-2 md:space-x-4">
+                <a href="index.html" class="nav-link active">Learn</a> 
+                <a href="quizzes_page.html" class="nav-link">Quizzes</a>
             </nav>
             <div class="text-right">
                 <p class="text-sm text-slate-500">Your Score:</p>
@@ -97,7 +97,8 @@
                     All Categories
                 </a>
                 <h3 id="current-category-title" class="text-2xl md:text-3xl font-bold text-slate-700 text-center flex-grow">Category Questions</h3>
-                <div class="w-28 md:w-40"></div> </div>
+                <div class="w-28 md:w-40"></div>
+             </div>
              <div id="category-progress-container" class="mb-6">
                 <p class="text-sm text-slate-500 text-center mb-1">Category Progress:</p>
                 <div class="progress-bar-bg w-full h-4 rounded-full overflow-hidden">
@@ -105,11 +106,13 @@
                 </div>
             </div>
             <div id="questions-grid" class="space-y-4">
-                </div>
+                {/* Questions will be injected here by JS */}
+            </div>
              <p id="no-questions-message" class="hidden text-center text-slate-500 text-lg py-10">Hmm, no questions found for this category, or the category ID is missing!</p>
             
             <div id="quiz-link-container" class="text-center mt-10">
-                </div>
+                {/* Quiz link will be injected here by JS */}
+            </div>
         </section>
     </main>
 
@@ -144,9 +147,9 @@
     </div>
 
     <script>
-        // --- Common Data ---
+        // --- Main Categories Data Store ---
         const categoriesData = [
-             {
+            {
                 id: "body", title: "🧠 Why Does My Body Do That?", description: "Explore weird, funny, and fascinating body quirks.", color: "border-red-400", icon: "🤸", badgeIcon: "🏆", badgeName: "Body Whiz",
                 questions: [ 
                     { id: "q1-body", text: "Why do we say 'bless you' when someone sneezes?", audioUrl: "#", funFact: "The custom of saying 'bless you' dates back to ancient times when a sneeze was thought to expel evil spirits or be a sign of impending illness. Pope Gregory the Great in 600 AD even decreed it during a plague!", points: 10 },
@@ -162,15 +165,40 @@
             },
             {
                 id: "nature", title: "🌍 Nature’s Little Mysteries", description: "Answers to quirky nature-related questions.", color: "border-green-400", icon: "🌳", badgeIcon: "🏅", badgeName: "Nature Navigator",
-                questions: [ /* ... questions ... */ ]
+                questions: [
+                    { id: "q1-nature", text: "Why do flamingos stand on one leg?", audioUrl: "#", funFact: "To conserve body heat or reduce muscle fatigue!", points: 10 },
+                    { id: "q2-nature", text: "Do ants sleep?", audioUrl: "#", funFact: "Yes, worker ants take many short power naps!", points: 10 },
+                    { id: "q3-nature", text: "Why do cats purr?", audioUrl: "#", funFact: "For happiness, stress relief, or even healing!", points: 15 },
+                    { id: "q4-nature", text: "Why don’t birds get electrocuted on power lines?", audioUrl: "#", funFact: "They don't complete a circuit if they only touch one wire!", points: 10 },
+                    { id: "q5-nature", text: "Why do fireflies glow?", audioUrl: "#", funFact: "It's a chemical reaction called bioluminescence, used for mating!", points: 10 },
+                    { id: "q6-nature", text: "Do fish ever get thirsty?", audioUrl: "#", funFact: "Saltwater fish drink a lot; freshwater fish absorb water.", points: 10 },
+                    { id: "q7-nature", text: "Why do leaves change color in the fall?", audioUrl: "#", funFact: "Chlorophyll breaks down, revealing other pigments.", points: 10 },
+                    { id: "q8-nature", text: "How do trees know when it’s spring?", audioUrl: "#", funFact: "They sense warming temperatures and longer daylight hours.", points: 10 }
+                ]
             },
             {
                 id: "science", title: "⚡ Science in a Snap!", description: "Quick bursts of science to blow your mind.", color: "border-yellow-400", icon: "💡", badgeIcon: "🔬", badgeName: "Science Superstar",
-                questions: [ /* ... questions ... */ ]
+                questions: [
+                    { id: "q1-science", text: "Why is the sky blue but sunsets orange?", audioUrl: "#", funFact: "Sunlight scatters; blue scatters more during the day, red/orange at sunset.", points: 10 },
+                    { id: "q2-science", text: "What causes static electricity?", audioUrl: "#", funFact: "An imbalance of electric charges from friction.", points: 10 },
+                    { id: "q3-science", text: "Why doesn’t the moon fall to Earth?", audioUrl: "#", funFact: "It's constantly falling *around* Earth due to its sideways speed.", points: 15 },
+                    { id: "q4-science", text: "What’s the difference between a virus and a bacteria?", audioUrl: "#", funFact: "Bacteria are living cells; viruses are tiny hijackers needing a host.", points: 10 },
+                    { id: "q5-science", text: "Why do some things glow in the dark?", audioUrl: "#", funFact: "Phosphors absorb light energy and release it slowly.", points: 10 },
+                    { id: "q6-science", text: "How do microwave ovens heat food?", audioUrl: "#", funFact: "They make water molecules in food vibrate rapidly.", points: 10 },
+                    { id: "q7-science", text: "Why do fizzy drinks fizz?", audioUrl: "#", funFact: "Dissolved carbon dioxide gas escaping when pressure is released.", points: 10 },
+                    { id: "q8-science", text: "Why does pineapple make your mouth tingle?", audioUrl: "#", funFact: "An enzyme called bromelain breaks down proteins in your mouth.", points: 10 }
+                ]
             },
             {
                 id: "tech", title: "📱 Tech Explained Like You're 5", description: "Make modern life’s oddities make sense.", color: "border-purple-400", icon: "🤖", badgeIcon: "⚙️", badgeName: "Tech Titan",
-                questions: [ /* ... questions ... */ ]
+                questions: [
+                    { id: "q1-tech", text: "How do QR codes actually work?", audioUrl: "#", funFact: "They store info in a pattern of squares your phone decodes.", points: 10 },
+                    { id: "q2-tech", text: "Why does your voice sound weird on a recording?", audioUrl: "#", funFact: "Recordings miss the bone conduction part of how you hear yourself.", points: 15 },
+                    { id: "q3-tech", text: "What does airplane mode actually do?", audioUrl: "#", funFact: "Turns off wireless transmissions to prevent aircraft interference.", points: 10 },
+                    { id: "q4-tech", text: "Why do phone screens crack so easily?", audioUrl: "#", funFact: "The hard, scratch-resistant glass is also brittle.", points: 10 },
+                    { id: "q5-tech", text: "Why does Wi-Fi sometimes work better in the bathroom?", audioUrl: "#", funFact: "Thinner walls or signal reflections can create stronger spots.", points: 10 },
+                    { id: "q6-tech", text: "Why do we press harder on the remote when the battery’s low?", audioUrl: "#", funFact: "It's a psychological tic; doesn't actually help the weak signal.", points: 10 }
+                ]
             }
         ];
 
@@ -197,7 +225,6 @@
 
         const logoLinkElem = document.getElementById('logoLink');
         const allCategoriesLinkElem = document.getElementById('allCategoriesLink');
-
 
         let currentCategory = null;
         let currentQuestion = null;
@@ -227,7 +254,7 @@
         }
         
         function unlockBadge(categoryData) { 
-            if (userData.unlockedBadges.find(b => b.categoryId === categoryData.id)) return; 
+            if (!categoryData || userData.unlockedBadges.find(b => b.categoryId === categoryData.id)) return; 
             const newBadge = { categoryId: categoryData.id, badgeIcon: categoryData.badgeIcon, badgeName: categoryData.badgeName };
             userData.unlockedBadges.push(newBadge);
             saveUserData();
@@ -293,7 +320,7 @@
             if(modalPointsValueElem) modalPointsValueElem.textContent = question.points;
             
             if(markListenedButtonElem) {
-                markListenedButtonElem.disabled = userData.listenedQuestions[question.id];
+                markListenedButtonElem.disabled = !!userData.listenedQuestions[question.id];
                 markListenedButtonElem.textContent = userData.listenedQuestions[question.id] ? 'Already Listened!' : `Got It! (+${question.points} pts)`;
                 markListenedButtonElem.classList.toggle('bg-slate-400', !!userData.listenedQuestions[question.id]);
                 markListenedButtonElem.classList.toggle('cursor-not-allowed', !!userData.listenedQuestions[question.id]);
@@ -338,7 +365,6 @@
             });
         }
         
-        // --- DEBUGGING CLICK LISTENERS ---
         if (logoLinkElem) {
             logoLinkElem.addEventListener('click', function(event) {
                 console.log('CurioVerse logo link clicked. Href:', this.href);
@@ -350,8 +376,6 @@
                 console.log('"All Categories" link clicked. Href:', this.href);
             });
         }
-        // --- END DEBUGGING CLICK LISTENERS ---
-
 
         // --- Initial Load for category_page.html ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -359,6 +383,7 @@
 
             const categoryId = getQueryParam('id');
             if (categoryId) {
+                // **FIX: Use the globally defined categoriesData**
                 currentCategory = categoriesData.find(cat => cat.id === categoryId);
             }
             
