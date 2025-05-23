@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Category Questions - CurioVerse</title> <script src="https://cdn.tailwindcss.com"></script>
+    <title>Category Questions - CurioVerse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
     <style>
         body {
@@ -69,6 +70,12 @@
         .quiz-category-button {
              @apply mt-8 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 ease-in-out inline-flex items-center text-base;
         }
+        /* Style for the audio player */
+        #modal-audio-player {
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body class="antialiased text-slate-700">
@@ -129,9 +136,10 @@
                 </div>
             </div>
             <div class="p-6 flex-grow overflow-y-auto space-y-4">
-                <div id="audio-player-placeholder" class="text-center p-6 bg-slate-100 rounded-lg">
-                    <p class="text-slate-600 text-lg">🎧 Playing Audio... 🎧</p>
-                    <p class="text-sm text-slate-500 mt-2">(Audio simulation for now! Imagine insightful & funny narration here.)</p>
+                <div id="audio-player-container" class="my-4">
+                    <audio id="modal-audio-player" controls style="width: 100%;">
+                        Your browser does not support the audio element.
+                    </audio>
                 </div>
                 <div>
                     <h5 class="text-lg font-semibold text-blue-600 mb-2">🤯 Mind-Blowing Fact:</h5>
@@ -152,52 +160,64 @@
             {
                 id: "body", title: "🧠 Why Does My Body Do That?", description: "Explore weird, funny, and fascinating body quirks.", color: "border-red-400", icon: "🤸", badgeIcon: "🏆", badgeName: "Body Whiz",
                 questions: [ 
-                    { id: "q1-body", text: "Why do we say 'bless you' when someone sneezes?", audioUrl: "#", funFact: "The custom of saying 'bless you' dates back to ancient times when a sneeze was thought to expel evil spirits or be a sign of impending illness. Pope Gregory the Great in 600 AD even decreed it during a plague!", points: 10 },
-                    { id: "q2-body", text: "Why do onions make us cry?", audioUrl: "#", funFact: "Onions release a chemical called syn-propanethial-S-oxide. When it hits your eyes, it reacts with the water to form sulfuric acid. Ouch!", points: 10 },
-                    { id: "q3-body", text: "Why do we get goosebumps?", audioUrl: "#", funFact: "Goosebumps are a leftover reflex from our hairy ancestors. The tiny muscles at the base of each hair contract, making hairs stand up to trap more air for warmth or to appear larger to predators.", points: 10 },
-                    { id: "q4-body", text: "Why do hiccups happen, and how do you actually stop them?", audioUrl: "#", funFact: "Hiccups are involuntary spasms of your diaphragm. Holding your breath or drinking water upside down can sometimes interrupt the nerve signals causing the spasms!", points: 15 },
-                    { id: "q5-body", text: "Why do your fingers wrinkle in water?", audioUrl: "#", funFact: "It's not just water absorption! Scientists believe wrinkled fingers improve our grip on wet objects, an evolutionary trait like tire treads for better traction.", points: 10 },
-                    { id: "q6-body", text: "Why do we yawn — and why is it contagious?", audioUrl: "#", funFact: "Yawning might help cool the brain! Contagious yawning is linked to empathy and social bonding – you're more likely to 'catch' a yawn from someone you're close to.", points: 10 },
-                    { id: "q7-body", text: "Why does your stomach growl when you're hungry?", audioUrl: "#", funFact: "That 'growl' (borborygmus) is the sound of muscles in your stomach and intestines contracting to push food, liquid, and gas through. It happens all the time, but it's louder when your stomach is empty!", points: 10 },
-                    { id: "q8-body", text: "Can you tickle yourself? Why not?", audioUrl: "#", funFact: "Probably not! Your brain anticipates your own touch and cancels out the ticklish sensation. The surprise element is key for tickling!", points: 15 },
-                    { id: "q9-body", text: "Why do we sometimes get a song stuck in our head?", audioUrl: "#", funFact: "These 'earworms' often happen with catchy, repetitive tunes. Your brain might be trying to 'complete' an unfinished musical pattern or it's just a sign of an overactive auditory cortex.", points: 10 }
+                    { 
+                        id: "q1-body", 
+                        text: "Why do we say 'bless you' when someone sneezes?", 
+                        audioUrl: "https://drive.google.com/uc?export=download&id=17pjXkUk-eNU_Aymnqyu0CSz7QwTrgBiL", // Example Updated URL
+                        funFact: "The custom of saying 'bless you' dates back to ancient times when a sneeze was thought to expel evil spirits or be a sign of impending illness. Pope Gregory the Great in 600 AD even decreed it during a plague!", 
+                        points: 10 
+                    },
+                    { 
+                        id: "q2-body", 
+                        text: "Why do onions make us cry?", 
+                        audioUrl: "https://drive.google.com/uc?export=download&id=1GY6f9y1AD99NqYKckv-qgzkP6yRukDmS", // Example Updated URL
+                        funFact: "Onions release a chemical called syn-propanethial-S-oxide. When it hits your eyes, it reacts with the water to form sulfuric acid. Ouch!", 
+                        points: 10 
+                    },
+                    { id: "q3-body", text: "Why do we get goosebumps?", audioUrl: "YOUR_AUDIO_URL_HERE/goosebumps.mp3", funFact: "Goosebumps are a leftover reflex from our hairy ancestors. The tiny muscles at the base of each hair contract, making hairs stand up to trap more air for warmth or to appear larger to predators.", points: 10 },
+                    { id: "q4-body", text: "Why do hiccups happen, and how do you actually stop them?", audioUrl: "YOUR_AUDIO_URL_HERE/hiccups.mp3", funFact: "Hiccups are involuntary spasms of your diaphragm. Holding your breath or drinking water upside down can sometimes interrupt the nerve signals causing the spasms!", points: 15 },
+                    { id: "q5-body", text: "Why do your fingers wrinkle in water?", audioUrl: "YOUR_AUDIO_URL_HERE/wrinkled_fingers.mp3", funFact: "It's not just water absorption! Scientists believe wrinkled fingers improve our grip on wet objects, an evolutionary trait like tire treads for better traction.", points: 10 },
+                    { id: "q6-body", text: "Why do we yawn — and why is it contagious?", audioUrl: "YOUR_AUDIO_URL_HERE/yawning.mp3", funFact: "Yawning might help cool the brain! Contagious yawning is linked to empathy and social bonding – you're more likely to 'catch' a yawn from someone you're close to.", points: 10 },
+                    { id: "q7-body", text: "Why does your stomach growl when you're hungry?", audioUrl: "YOUR_AUDIO_URL_HERE/stomach_growl.mp3", funFact: "That 'growl' (borborygmus) is the sound of muscles in your stomach and intestines contracting to push food, liquid, and gas through. It happens all the time, but it's louder when your stomach is empty!", points: 10 },
+                    { id: "q8-body", text: "Can you tickle yourself? Why not?", audioUrl: "YOUR_AUDIO_URL_HERE/tickle.mp3", funFact: "Probably not! Your brain anticipates your own touch and cancels out the ticklish sensation. The surprise element is key for tickling!", points: 15 },
+                    { id: "q9-body", text: "Why do we sometimes get a song stuck in our head?", audioUrl: "YOUR_AUDIO_URL_HERE/earworm.mp3", funFact: "These 'earworms' often happen with catchy, repetitive tunes. Your brain might be trying to 'complete' an unfinished musical pattern or it's just a sign of an overactive auditory cortex.", points: 10 }
                 ]
             },
             {
                 id: "nature", title: "🌍 Nature’s Little Mysteries", description: "Answers to quirky nature-related questions.", color: "border-green-400", icon: "🌳", badgeIcon: "🏅", badgeName: "Nature Navigator",
                 questions: [
-                    { id: "q1-nature", text: "Why do flamingos stand on one leg?", audioUrl: "#", funFact: "To conserve body heat or reduce muscle fatigue!", points: 10 },
-                    { id: "q2-nature", text: "Do ants sleep?", audioUrl: "#", funFact: "Yes, worker ants take many short power naps!", points: 10 },
-                    { id: "q3-nature", text: "Why do cats purr?", audioUrl: "#", funFact: "For happiness, stress relief, or even healing!", points: 15 },
-                    { id: "q4-nature", text: "Why don’t birds get electrocuted on power lines?", audioUrl: "#", funFact: "They don't complete a circuit if they only touch one wire!", points: 10 },
-                    { id: "q5-nature", text: "Why do fireflies glow?", audioUrl: "#", funFact: "It's a chemical reaction called bioluminescence, used for mating!", points: 10 },
-                    { id: "q6-nature", text: "Do fish ever get thirsty?", audioUrl: "#", funFact: "Saltwater fish drink a lot; freshwater fish absorb water.", points: 10 },
-                    { id: "q7-nature", text: "Why do leaves change color in the fall?", audioUrl: "#", funFact: "Chlorophyll breaks down, revealing other pigments.", points: 10 },
-                    { id: "q8-nature", text: "How do trees know when it’s spring?", audioUrl: "#", funFact: "They sense warming temperatures and longer daylight hours.", points: 10 }
+                    { id: "q1-nature", text: "Why do flamingos stand on one leg?", audioUrl: "YOUR_AUDIO_URL_HERE/flamingos.mp3", funFact: "To conserve body heat or reduce muscle fatigue!", points: 10 },
+                    { id: "q2-nature", text: "Do ants sleep?", audioUrl: "YOUR_AUDIO_URL_HERE/ants_sleep.mp3", funFact: "Yes, worker ants take many short power naps!", points: 10 },
+                    { id: "q3-nature", text: "Why do cats purr?", audioUrl: "YOUR_AUDIO_URL_HERE/cats_purr.mp3", funFact: "For happiness, stress relief, or even healing!", points: 15 },
+                    { id: "q4-nature", text: "Why don’t birds get electrocuted on power lines?", audioUrl: "YOUR_AUDIO_URL_HERE/birds_powerlines.mp3", funFact: "They don't complete a circuit if they only touch one wire!", points: 10 },
+                    { id: "q5-nature", text: "Why do fireflies glow?", audioUrl: "YOUR_AUDIO_URL_HERE/fireflies.mp3", funFact: "It's a chemical reaction called bioluminescence, used for mating!", points: 10 },
+                    { id: "q6-nature", text: "Do fish ever get thirsty?", audioUrl: "YOUR_AUDIO_URL_HERE/fish_thirsty.mp3", funFact: "Saltwater fish drink a lot; freshwater fish absorb water.", points: 10 },
+                    { id: "q7-nature", text: "Why do leaves change color in the fall?", audioUrl: "YOUR_AUDIO_URL_HERE/leaves_fall.mp3", funFact: "Chlorophyll breaks down, revealing other pigments.", points: 10 },
+                    { id: "q8-nature", text: "How do trees know when it’s spring?", audioUrl: "YOUR_AUDIO_URL_HERE/trees_spring.mp3", funFact: "They sense warming temperatures and longer daylight hours.", points: 10 }
                 ]
             },
             {
                 id: "science", title: "⚡ Science in a Snap!", description: "Quick bursts of science to blow your mind.", color: "border-yellow-400", icon: "💡", badgeIcon: "🔬", badgeName: "Science Superstar",
                 questions: [
-                    { id: "q1-science", text: "Why is the sky blue but sunsets orange?", audioUrl: "#", funFact: "Sunlight scatters; blue scatters more during the day, red/orange at sunset.", points: 10 },
-                    { id: "q2-science", text: "What causes static electricity?", audioUrl: "#", funFact: "An imbalance of electric charges from friction.", points: 10 },
-                    { id: "q3-science", text: "Why doesn’t the moon fall to Earth?", audioUrl: "#", funFact: "It's constantly falling *around* Earth due to its sideways speed.", points: 15 },
-                    { id: "q4-science", text: "What’s the difference between a virus and a bacteria?", audioUrl: "#", funFact: "Bacteria are living cells; viruses are tiny hijackers needing a host.", points: 10 },
-                    { id: "q5-science", text: "Why do some things glow in the dark?", audioUrl: "#", funFact: "Phosphors absorb light energy and release it slowly.", points: 10 },
-                    { id: "q6-science", text: "How do microwave ovens heat food?", audioUrl: "#", funFact: "They make water molecules in food vibrate rapidly.", points: 10 },
-                    { id: "q7-science", text: "Why do fizzy drinks fizz?", audioUrl: "#", funFact: "Dissolved carbon dioxide gas escaping when pressure is released.", points: 10 },
-                    { id: "q8-science", text: "Why does pineapple make your mouth tingle?", audioUrl: "#", funFact: "An enzyme called bromelain breaks down proteins in your mouth.", points: 10 }
+                    { id: "q1-science", text: "Why is the sky blue but sunsets orange?", audioUrl: "YOUR_AUDIO_URL_HERE/sky_blue.mp3", funFact: "Sunlight scatters; blue scatters more during the day, red/orange at sunset.", points: 10 },
+                    { id: "q2-science", text: "What causes static electricity?", audioUrl: "YOUR_AUDIO_URL_HERE/static_electricity.mp3", funFact: "An imbalance of electric charges from friction.", points: 10 },
+                    { id: "q3-science", text: "Why doesn’t the moon fall to Earth?", audioUrl: "YOUR_AUDIO_URL_HERE/moon_fall.mp3", funFact: "It's constantly falling *around* Earth due to its sideways speed.", points: 15 },
+                    { id: "q4-science", text: "What’s the difference between a virus and a bacteria?", audioUrl: "YOUR_AUDIO_URL_HERE/virus_bacteria.mp3", funFact: "Bacteria are living cells; viruses are tiny hijackers needing a host.", points: 10 },
+                    { id: "q5-science", text: "Why do some things glow in the dark?", audioUrl: "YOUR_AUDIO_URL_HERE/glow_dark.mp3", funFact: "Phosphors absorb light energy and release it slowly.", points: 10 },
+                    { id: "q6-science", text: "How do microwave ovens heat food?", audioUrl: "YOUR_AUDIO_URL_HERE/microwave.mp3", funFact: "They make water molecules in food vibrate rapidly.", points: 10 },
+                    { id: "q7-science", text: "Why do fizzy drinks fizz?", audioUrl: "YOUR_AUDIO_URL_HERE/fizzy_drinks.mp3", funFact: "Dissolved carbon dioxide gas escaping when pressure is released.", points: 10 },
+                    { id: "q8-science", text: "Why does pineapple make your mouth tingle?", audioUrl: "YOUR_AUDIO_URL_HERE/pineapple_tingle.mp3", funFact: "An enzyme called bromelain breaks down proteins in your mouth.", points: 10 }
                 ]
             },
             {
                 id: "tech", title: "📱 Tech Explained Like You're 5", description: "Make modern life’s oddities make sense.", color: "border-purple-400", icon: "🤖", badgeIcon: "⚙️", badgeName: "Tech Titan",
                 questions: [
-                    { id: "q1-tech", text: "How do QR codes actually work?", audioUrl: "#", funFact: "They store info in a pattern of squares your phone decodes.", points: 10 },
-                    { id: "q2-tech", text: "Why does your voice sound weird on a recording?", audioUrl: "#", funFact: "Recordings miss the bone conduction part of how you hear yourself.", points: 15 },
-                    { id: "q3-tech", text: "What does airplane mode actually do?", audioUrl: "#", funFact: "Turns off wireless transmissions to prevent aircraft interference.", points: 10 },
-                    { id: "q4-tech", text: "Why do phone screens crack so easily?", audioUrl: "#", funFact: "The hard, scratch-resistant glass is also brittle.", points: 10 },
-                    { id: "q5-tech", text: "Why does Wi-Fi sometimes work better in the bathroom?", audioUrl: "#", funFact: "Thinner walls or signal reflections can create stronger spots.", points: 10 },
-                    { id: "q6-tech", text: "Why do we press harder on the remote when the battery’s low?", audioUrl: "#", funFact: "It's a psychological tic; doesn't actually help the weak signal.", points: 10 }
+                    { id: "q1-tech", text: "How do QR codes actually work?", audioUrl: "YOUR_AUDIO_URL_HERE/qr_codes.mp3", funFact: "They store info in a pattern of squares your phone decodes.", points: 10 },
+                    { id: "q2-tech", text: "Why does your voice sound weird on a recording?", audioUrl: "YOUR_AUDIO_URL_HERE/voice_recording.mp3", funFact: "Recordings miss the bone conduction part of how you hear yourself.", points: 15 },
+                    { id: "q3-tech", text: "What does airplane mode actually do?", audioUrl: "YOUR_AUDIO_URL_HERE/airplane_mode.mp3", funFact: "Turns off wireless transmissions to prevent aircraft interference.", points: 10 },
+                    { id: "q4-tech", text: "Why do phone screens crack so easily?", audioUrl: "YOUR_AUDIO_URL_HERE/phone_screens.mp3", funFact: "The hard, scratch-resistant glass is also brittle.", points: 10 },
+                    { id: "q5-tech", text: "Why does Wi-Fi sometimes work better in the bathroom?", audioUrl: "YOUR_AUDIO_URL_HERE/wifi_bathroom.mp3", funFact: "Thinner walls or signal reflections can create stronger spots.", points: 10 },
+                    { id: "q6-tech", text: "Why do we press harder on the remote when the battery’s low?", audioUrl: "YOUR_AUDIO_URL_HERE/remote_battery.mp3", funFact: "It's a psychological tic; doesn't actually help the weak signal.", points: 10 }
                 ]
             }
         ];
@@ -222,12 +242,14 @@
         const modalPointsValueElem = document.getElementById('modal-points-value');
         const markListenedButtonElem = document.getElementById('mark-listened-button');
         const closeModalButtonElem = document.getElementById('close-modal-button');
+        const modalAudioPlayer = document.getElementById('modal-audio-player'); 
 
         const logoLinkElem = document.getElementById('logoLink');
         const allCategoriesLinkElem = document.getElementById('allCategoriesLink');
-
+        
         let currentCategory = null;
         let currentQuestion = null;
+
 
         // --- Utility Functions ---
         function getQueryParam(param) {
@@ -319,6 +341,17 @@
             if(modalFunFactElem) modalFunFactElem.textContent = question.funFact;
             if(modalPointsValueElem) modalPointsValueElem.textContent = question.points;
             
+            if (modalAudioPlayer) {
+                if (question.audioUrl && question.audioUrl !== "#" && !question.audioUrl.includes("YOUR_AUDIO_URL_HERE")) { // Check for placeholder
+                    modalAudioPlayer.src = question.audioUrl;
+                    modalAudioPlayer.load(); 
+                    document.getElementById('audio-player-container').style.display = 'block';
+                } else {
+                    modalAudioPlayer.src = ""; 
+                    document.getElementById('audio-player-container').style.display = 'none';
+                }
+            }
+            
             if(markListenedButtonElem) {
                 markListenedButtonElem.disabled = !!userData.listenedQuestions[question.id];
                 markListenedButtonElem.textContent = userData.listenedQuestions[question.id] ? 'Already Listened!' : `Got It! (+${question.points} pts)`;
@@ -336,6 +369,11 @@
             if(questionModalElem) questionModalElem.classList.remove('open');
             if(document && document.body) document.body.style.overflow = '';
             currentQuestion = null;
+
+            if (modalAudioPlayer) {
+                modalAudioPlayer.pause(); 
+                modalAudioPlayer.src = "";  
+            }
         }
 
         // --- Event Listeners for Category Page ---
@@ -360,7 +398,11 @@
                     updatePointsDisplay();
                     displayQuestionsForCategory(); 
                     saveUserData(); 
-                    closeModal();
+                    
+                     markListenedButtonElem.disabled = true;
+                     markListenedButtonElem.textContent = 'Already Listened!';
+                     markListenedButtonElem.classList.add('bg-slate-400', 'cursor-not-allowed');
+                     markListenedButtonElem.classList.remove('bg-green-500', 'hover:bg-green-600');
                 }
             });
         }
@@ -383,7 +425,6 @@
 
             const categoryId = getQueryParam('id');
             if (categoryId) {
-                // **FIX: Use the globally defined categoriesData**
                 currentCategory = categoriesData.find(cat => cat.id === categoryId);
             }
             
